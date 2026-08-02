@@ -19,18 +19,15 @@ int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 
     current = *head;
 
-    /* Silinəcək düyünə qədər gedirik */
     while (current != NULL && i < index)
     {
         current = current->next;
         i++;
     }
 
-    /* İndeks siyahının ölçüsündən böyükdürsə */
     if (current == NULL)
         return (-1);
 
-    /* Əgər ilk düyün silinirsə (index == 0) */
     if (index == 0)
     {
         *head = current->next;
@@ -39,10 +36,7 @@ int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
     }
     else
     {
-        /* Əvvəlki düyünün next-ini sonrakı düyünə bağlayırıq */
         current->prev->next = current->next;
-
-        /* Əgər sonuncu düyün deyilsə, sonrakının prev-ini əvvəlkiyə bağlayırıq */
         if (current->next != NULL)
             current->next->prev = current->prev;
     }
