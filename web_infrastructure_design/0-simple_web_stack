@@ -1,11 +1,11 @@
-[ User Browser ]
-        │
-        │ 1. DNS Lookup (www.foobar.com)
-        ▼ 
-   [ DNS Server ] ──► Returns IP: 8.8.8.8
-        │
-        │ 2. HTTP Request (IP: 8.8.8.8 / Port 80/443)
-        ▼
+                      [ User Browser ]
+                              │
+                              │ 1. DNS Lookup (www.foobar.com)
+                              ▼ 
+                         [ DNS Server ] ──► Returns IP: 8.8.8.8
+                              │
+                              │ 2. HTTP Request (IP: 8.8.8.8 / Port 80/443)
+                              ▼
 ┌───────────────────────────────────────────────────────────┐
 │ Server (IP: 8.8.8.8)                                      │
 │                                                           │
