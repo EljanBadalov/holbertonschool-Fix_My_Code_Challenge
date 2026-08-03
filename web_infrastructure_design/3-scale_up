@@ -1,0 +1,64 @@
+                              [ User Browser ]
+                                       │
+                                       │ 1. DNS Lookup (www.foobar.com)
+                                       ▼
+                                [ DNS Server ] ──► Returns Active Floating Virtual IP (VIP)
+                                       │
+                                       │ 2. Encrypted HTTPS Request (Port 443)
+                                       ▼
+                       ┌──────────────────────────────┐
+                       │  Firewall 1 (Edge Network)   │
+                       └───────────────┬──────────────┘
+                                       │
+            ┌──────────────────────────┴──────────────────────────┐
+            │ Active-Passive High Availability Cluster            │
+            │              (Virtual IP: 8.8.8.8)                  │
+            │                                                     │
+            ▼                                                     ▼
+┌─────────────────────────┐   Keepalived (VRRP)   ┌─────────────────────────┐
+│ Load Balancer 1         │ ◄───────────────────► │ Load Balancer 2         │
+│ (HAProxy - Master)      │                       │ (HAProxy - Backup)      │
+│ [Sumo Logic Agent]      │                       │ [Sumo Logic Agent]      │
+└───────────┬─────────────┘                       └───────────┬─────────────┘
+            │                                                 │
+            └─────────────────────────┬───────────────────────┘
+                                      │ SSL Re-Encryption / HTTP
+                                      ▼
+                       ┌──────────────────────────────┐
+                       │  Firewall 2 (Internal Web)   │
+                       └───────────────┬──────────────┘
+                                       │
+            ┌──────────────────────────┴──────────────────────────┐
+            │ Distributed Web Traffic (Round Robin / Leastconn)   │
+            ▼                                                     ▼
+┌─────────────────────────┐                       ┌─────────────────────────┐
+│ Web / App Server 1      │                       │ Web / App Server 2      │
+│ ┌─────────────────────┐ │                       │ ┌─────────────────────┐ │
+│ │ Web Server (Nginx)  │ │                       │ │ Web Server (Nginx)  │ │
+│ └──────────┬──────────┘ │                       │ └──────────┬──────────┘ │
+│            ▼            │                       │            ▼            │
+│ ┌─────────────────────┐ │                       │ ┌─────────────────────┐ │
+│ │ App Server (Node)   │ │                       │ │ App Server (Node)   │ │
+│ └──────────┬──────────┘ │                       │ └──────────┬──────────┘ │
+│            ▼            │                       │            ▼            │
+│ ┌─────────────────────┐ │                       │ ┌─────────────────────┐ │
+│ │ Codebase Files      │ │                       │ │ Codebase Files      │ │
+│ └─────────────────────┘ │                       │ └─────────────────────┘ │
+│ [Sumo Logic Agent]      │                       │ [Sumo Logic Agent]      │
+└────────────┬────────────┘                       └────────────┬────────────┘
+             │                                                 │
+             └────────────────────────┬────────────────────────┘
+                                      │ Database Queries (Port 3306)
+                                      ▼
+                       ┌──────────────────────────────┐
+                       │   Firewall 3 (Database)      │
+                       └───────────────┬──────────────┘
+                                       │
+            ┌──────────────────────────┴──────────────────────────┐
+            │ Database Read / Write Split Operations              │
+            ▼                                                     ▼
+┌─────────────────────────┐                       ┌─────────────────────────┐
+│ Database Server 1       │ MySQL Binary Replication│ Database Server 2       │
+│ (MySQL Primary - Writes)├──────────────────────►│ (MySQL Replica - Reads) │
+│ [Sumo Logic Agent]      │                       │ [Sumo Logic Agent]      │
+└─────────────────────────┘                       └─────────────────────────┘
